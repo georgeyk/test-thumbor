@@ -1,11 +1,23 @@
 test-thumbor
 ============
 
+Setup
+-----
+
+
 * Instalar [docker](http://www.docker.io/gettingstarted/)
 
 * Baixar imagem:
 
 $ sudo docker pull georgeyk/thumbor
+
+... wait and...
+... wait ...
+
+
+Uso
+---
+
 
 * Iniciar serviço:
 
@@ -33,3 +45,52 @@ Server: TornadoServer/3.1.1
 * No browser (note o valor de Location):
 
 http://127.0.0.1:8888/unsafe/100x100/89f061b9fd20493f85b380a6b5f917cf/foo
+
+* Alternativamente, podemos passar apenas a URL da imagem que queremos o thumbnail (client.py):
+
+$ python client.py
+http://127.0.0.1:8888/hVwWGACa9JZSHNiFTMKs70NpR1s=/150x150/29.media.tumblr.com/tumblr_lltzgnHi5F1qzib3wo1_400.jpg
+
+
+Segurança / Acesso por usuário
+------------------------------
+
+
+Não existe um método built-in no thumbor para isso.
+Um possível workaround seria verificar, ao renderizar a URL no template, se o usuário possui permissão para ver tal imagem.
+
+O thumbor prevê um mecanismo para evitar abuso do serviço [(here)](https://github.com/globocom/thumbor/wiki/Security)
+
+Além disso é possível usar uma templetag para facilitar o uso nos templates [(here)](http://tech.yipit.com/2013/01/03/how-yipit-scales-thumbnailing-with-thumbor-and-cloudfront/)
+
+
+Suporte para EXIF orientation
+-----------------------------
+
+Possui e é funcional (já está configurado no container de exemplo).
+
+Podem usar essas [imagens](https://github.com/recurser/exif-orientation-examples) para testar
+
+
+Performance
+-----------
+
+Não avaliei outras bibliotecas além da PIL.
+Além dela ser a 'default' no thumbor (eg, deve ter um melhor suporte), existe uma nota explicando um bug com imagemagick na documentação do thumbor (usando .gif).
+E ambas são wrappers para bibliotecas em C (eg, perfomance similares I guess)
+
+Na utilização, vejo dois cenários:
+
+1) Upload das imagens "internamente", isto é, ao recebermos a imagem, faremos o upload para o thumbor diretamente (similar ao exemplo no início deste arquivo).
+
+Prós: elimina o tempo de espera para subir uma imagem ao thumbor
+Contra: o cliente precisa guardar o "location" da imagem que fez o upload
+
+2) Upload da imagem quando o usuário requisitar um thumbnail.
+
+Prós: é mais dinâmico, pode poupar storage
+Contra: contabiliza o tempo de upload
+
+
+Existem opções para se configurar queues/storage/cache: redis, mongodb, memcache
+E neste [link](http://tech.yipit.com/2013/01/03/how-yipit-scales-thumbnailing-with-thumbor-and-cloudfront/), o uso do aws cloudfront, embora não tenha testado com nenhuma essas opções.
