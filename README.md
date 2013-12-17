@@ -94,3 +94,21 @@ Contra: contabiliza o tempo de upload
 
 Existem opções para se configurar queues/storage/cache: redis, mongodb, memcache
 E neste [link](http://tech.yipit.com/2013/01/03/how-yipit-scales-thumbnailing-with-thumbor-and-cloudfront/), o uso do aws cloudfront, embora não tenha testado com nenhuma essas opções.
+
+
+Thumbnails para outros tipos de arquivos
+----------------------------------------
+
+* PDF: a solução mais comum é converter o arquivo para imagem (png/jpg) e então
+  gerar o thumbnail.
+  Aparentemente, o modo mais comum de se fazer isso é usando ferramentas
+  externas como a imagemagick ou ghostscript.
+
+* Vídeos: a solução mais simples seria extrair um frame e então gerar o
+  thumbnail. Algumas bibliotecas de referência: PyMedia, ffmpeg.
+
+* MP3 (e outros formatos de áudio): algumas bibliotecas para acessar os
+  metadados: mutagen, PyMedia.
+
+* .doc: parece ser possível utilizar o openoffice como "server" e então
+  converter o arquivo para pdf (pyuno).
